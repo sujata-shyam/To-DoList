@@ -18,11 +18,11 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="checkmark" indentationWidth="10" reuseIdentifier="ToDoItemCell" id="P9T-2C-7QC">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="ToDoItemCell" id="P9T-2C-7QC">
                                 <rect key="frame" x="0.0" y="28" width="375" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="P9T-2C-7QC" id="hsW-g9-Rs3">
-                                    <rect key="frame" x="0.0" y="0.0" width="335" height="43.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
                             </tableViewCell>
@@ -32,7 +32,13 @@
                             <outlet property="delegate" destination="QJZ-2L-t4K" id="oNQ-Ai-NLE"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="To-Do List" id="6UF-eq-ehd"/>
+                    <navigationItem key="navigationItem" title="To-Do List" id="6UF-eq-ehd">
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="uf2-tc-vqM">
+                            <connections>
+                                <action selector="barButtonPressed:" destination="QJZ-2L-t4K" id="fkk-2q-NZ1"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="uVk-qm-xTH" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
