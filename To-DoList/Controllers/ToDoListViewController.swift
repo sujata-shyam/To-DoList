@@ -50,9 +50,6 @@ class ToDoListViewController: UITableViewController
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
-//        context.delete(itemArray[indexPath.row])
-//        itemArray.remove(at: indexPath.row)
-
         itemArray[indexPath.row].done = !itemArray[indexPath.row].done
         
         saveItems()
@@ -88,12 +85,6 @@ class ToDoListViewController: UITableViewController
         alert.addAction(action)
         present(alert, animated: true, completion: nil)
     }
-    
-    //MARK: Cell Swiping methods
-//    override func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration?
-//    {
-//
-//    }
     
     //MARK: - Model Manipulation Methods
     
@@ -134,6 +125,43 @@ class ToDoListViewController: UITableViewController
         }
         tableView.reloadData()
     }
+    
+    //Override to support conditional editing of the table view.
+    
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool
+    {
+        //Return false if you do not want the specified item to be editable.
+        return true
+    }
+    
+    //Override to support editing the table view.
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath)
+    {
+        if editingStyle == .delete
+        {
+            //Delete the row from the data source
+            context.delete(itemArray[indexPath.row])
+            itemArray.remove(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .fade)
+            saveItems()
+            
+        }
+    }
+    
+//    // Override to support conditional rearranging of the table view.
+//    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool
+//    {
+//        // Return false if you do not want the item to be re-orderable.
+//        return true
+//    }
+//
+//    // Override to support rearranging the table view.
+//    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath)
+//    {
+//        let itemToMove = itemArray[fromIndexPath.row]
+//        itemArray.remove(at: fromIndexPath.row)
+//        itemArray.insert(itemToMove, at: to.row)
+//    }
 }
 
 //MARK: - Search Bar Methods
@@ -178,26 +206,4 @@ extension ToDoListViewController: UISearchBarDelegate
             loadItems(with: result.0, predicate: result.1)
         }
     }
-    
-    
-      //Override to support conditional editing of the table view.
-    
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool
-    {
-      //Return false if you do not want the specified item to be editable.
-        return true
-     }
- 
-      //Override to support editing the table view.
-     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath)
-     {
-        if editingStyle == .delete
-        {
-      //Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        }
-        else if editingStyle == .insert {
-      //Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }
-     }
 }
