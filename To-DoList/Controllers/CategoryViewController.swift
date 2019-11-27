@@ -19,11 +19,27 @@ class CategoryViewController: UITableViewController
     {
         super.viewDidLoad()
         
-        print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
+        //print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
 
+        let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(longPressedTableView))
+        
+        tableView.addGestureRecognizer(longPressRecognizer)
         loadCategories()
     }
 
+    @objc func longPressedTableView(sender:UILongPressGestureRecognizer)
+    {
+        if(sender.state == .began)
+        {
+            let touchPoint = sender.location(in: tableView)
+            if let indexPath = tableView.indexPathForRow(at: touchPoint)
+            {
+                tableView.selectRow(at: indexPath, animated: true, scrollPosition: .none)
+                performSegue(withIdentifier: "goToItems", sender: tableView)
+            }
+        }
+    }
+    
     //MARK: - TableView Datasource methods
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
@@ -35,13 +51,18 @@ class CategoryViewController: UITableViewController
         let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
         
         cell.textLabel?.text = categories[indexPath.row].name
+        cell.accessoryType = categories[indexPath.row].done ? .checkmark : .none
+        
         return cell
     }
     
     //MARK: - TableView Delegate methods
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
-        performSegue(withIdentifier: "goToItems", sender: self)
+        categories[indexPath.row].done = !categories[indexPath.row].done
+        
+        saveCategories()
+        tableView.deselectRow(at: indexPath, animated: true)
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?)
@@ -93,6 +114,7 @@ class CategoryViewController: UITableViewController
             
             let newCategory = Category(context: self.context)
             newCategory.name = textField.text!
+            newCategory.done = false
             
             self.categories.append(newCategory)
             self.saveCategories()
