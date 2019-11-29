@@ -19,6 +19,9 @@ class CategoryViewController: UITableViewController
     {
         super.viewDidLoad()
         
+        self.tableView.estimatedRowHeight = 44.0
+
+        
         //print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
 
         let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(longPressedTableView))
@@ -40,6 +43,37 @@ class CategoryViewController: UITableViewController
         }
     }
     
+    @IBAction func addNoteButtonPressed(_ sender: UIButton)
+    {
+        var textField = UITextField()
+        
+        let alert = UIAlertController(title: "Add Category Note", message: "", preferredStyle: .alert)
+        
+        let action = UIAlertAction(title: "Add", style: .default) { (action) in
+            
+            print("NOTE ADDED")
+//            let newCategory = Category(context: self.context)
+//            newCategory.name = textField.text!
+//
+//            self.categories.append(newCategory)
+//            self.saveCategories()
+        }
+        
+        let cancel = UIAlertAction(title: "Cancel", style: .cancel) { (action) in
+            self.dismiss(animated: true, completion: nil)
+        }
+        alert.addAction(cancel)
+
+        alert.addAction(action)
+        
+        alert.addTextField { (field) in
+            textField = field
+            
+            textField.placeholder = "Note"
+        }
+        present(alert, animated: true, completion: nil)
+    }
+    
     //MARK: - TableView Datasource methods
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
@@ -48,12 +82,16 @@ class CategoryViewController: UITableViewController
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath) as? categoryTableViewCell
         
-        cell.textLabel?.text = categories[indexPath.row].name
-        cell.accessoryType = categories[indexPath.row].done ? .checkmark : .none
+        cell?.lblTitle.text = categories[indexPath.row].name
         
-        return cell
+        //cell.textLabel?.text = categories[indexPath.row].name
+        cell?.accessoryType = categories[indexPath.row].done ? .checkmark : .none
+        
+        
+        
+        return cell!
     }
     
     //MARK: - TableView Delegate methods
@@ -67,12 +105,24 @@ class CategoryViewController: UITableViewController
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?)
     {
-        let destinationVC = segue.destination as! ToDoListViewController
-        
-        if let indexPath = tableView.indexPathForSelectedRow
-        {
-            destinationVC.selectedCategory = categories[indexPath.row]
-        }
+        //if let indexPath = tableView.indexPathForSelectedRow
+        //{
+            if let toDoVC = segue.destination as? ToDoListViewController
+            {
+                if let indexPath = tableView.indexPathForSelectedRow
+                {
+                    toDoVC.selectedCategory = categories[indexPath.row]
+                }
+            }
+            else if let noteVC = segue.destination as? noteViewController
+            {
+                if let indexPath = tableView.indexPathForSelectedRow
+                {
+                    noteVC.itemTitle = categories[indexPath.row].name!
+                    noteVC.type = "category"
+                }
+            }
+        //}
     }
     //MARK: - Data manipulation methods
 
@@ -119,12 +169,18 @@ class CategoryViewController: UITableViewController
             self.categories.append(newCategory)
             self.saveCategories()
         }
+        
+        let cancel = UIAlertAction(title: "Cancel", style: .cancel) { (action) in
+            self.dismiss(animated: true, completion: nil)
+        }
         alert.addAction(action)
-
+        alert.addAction(cancel)
+    
         alert.addTextField { (field) in
             textField = field
             textField.placeholder = "Create new category"
         }
+        
         present(alert, animated: true, completion: nil)
     }
     
@@ -137,18 +193,74 @@ class CategoryViewController: UITableViewController
     }
     
     //Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath)
+//    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath)
+//    {
+//        if editingStyle == .delete
+//        {
+//            //Delete the row from the data source
+//            context.delete(categories[indexPath.row])
+//
+//            categories.remove(at: indexPath.row)
+//            tableView.deleteRows(at: [indexPath], with: .fade)
+//            saveCategories()
+//
+//        }
+//    }
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
     {
-        if editingStyle == .delete
-        {
-            //Delete the row from the data source
-            context.delete(categories[indexPath.row])
-            
-            categories.remove(at: indexPath.row)
-            tableView.deleteRows(at: [indexPath], with: .fade)
-            saveCategories()
-            
-        }
+        return UITableView.automaticDimension
     }
+    
+    //MARK: - Cell Swipe Actions
+    
+    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration?
+    {
+        let categoryTitle = categories[indexPath.row].name
+        
+        let delete = UIContextualAction(style: .destructive, title: "Delete") { (contextualAction, view, actionPerformed:@escaping (Bool)->() ) in
+            
+            let alert = UIAlertController(title: "Delete", message: "Are you sure you want to delete this task: \(categoryTitle!)", preferredStyle: .alert)
+            
+            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (alertAction) in
+                actionPerformed(false)
+            }))
+        
+            alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { (alertAction) in
+                
+                self.deleteCategory(index: indexPath.row)
+                tableView.reloadData()
+                actionPerformed(true)
+            }))
+            self.present(alert, animated: true)
+        }
+        return UISwipeActionsConfiguration(actions: [delete])
+    }
+    
+    override func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration?
+    {
+        <#code#>
+    }
+    
+    
+    func deleteCategory(index:Int)
+    {
+        //Delete the row from the data source
+        context.delete(categories[index])
+        categories.remove(at: index)
+        saveCategories()
+    }
+    
+}
 
+extension CategoryViewController: UITextViewDelegate
+{
+    func textViewDidChange(_ textView: UITextView)
+    {
+        UIView.setAnimationsEnabled(false)
+        textView.sizeToFit()
+        self.tableView.beginUpdates()
+        self.tableView.endUpdates()
+        UIView.setAnimationsEnabled(true)
+    }
 }

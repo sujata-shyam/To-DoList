@@ -84,7 +84,12 @@ class ToDoListViewController: UITableViewController
             textField = alertTextField
         }
         
+        let cancel = UIAlertAction(title: "Cancel", style: .cancel) { (action) in
+            self.dismiss(animated: true, completion: nil)
+        }
         alert.addAction(action)
+        alert.addAction(cancel)
+        
         present(alert, animated: true, completion: nil)
     }
     
