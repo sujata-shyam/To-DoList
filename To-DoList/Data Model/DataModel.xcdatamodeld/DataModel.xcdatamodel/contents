@@ -4,22 +4,20 @@
         <attribute name="done" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="name" attributeType="String" syncable="YES"/>
         <relationship name="items" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Item" inverseName="parentCategory" inverseEntity="Item" syncable="YES"/>
-        <relationship name="notes" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Note" inverseName="category" inverseEntity="Note" syncable="YES"/>
+        <relationship name="notes" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Notes" inverseName="parentCategory" inverseEntity="Notes" syncable="YES"/>
     </entity>
     <entity name="Item" representedClassName=".Item" syncable="YES" codeGenerationType="class">
         <attribute name="done" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="title" attributeType="String" syncable="YES"/>
-        <relationship name="notes" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Note" inverseName="item" inverseEntity="Note" syncable="YES"/>
         <relationship name="parentCategory" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Category" inverseName="items" inverseEntity="Category" syncable="YES"/>
     </entity>
-    <entity name="Note" representedClassName=".Note" syncable="YES" codeGenerationType="class">
-        <attribute name="note" attributeType="String" syncable="YES"/>
-        <relationship name="category" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Category" inverseName="notes" inverseEntity="Category" syncable="YES"/>
-        <relationship name="item" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Item" inverseName="notes" inverseEntity="Item" syncable="YES"/>
+    <entity name="Notes" representedClassName="Notes" syncable="YES" codeGenerationType="class">
+        <attribute name="note" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="parentCategory" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Category" inverseName="notes" inverseEntity="Category" syncable="YES"/>
     </entity>
     <elements>
         <element name="Category" positionX="-431.61328125" positionY="-99.22265625" width="144.4453125" height="103"/>
-        <element name="Item" positionX="-63" positionY="-18" width="128" height="103"/>
-        <element name="Note" positionX="-240.80078125" positionY="-122.109375" width="128" height="88"/>
+        <element name="Item" positionX="-63" positionY="-18" width="128" height="88"/>
+        <element name="Notes" positionX="-218.5078125" positionY="-219.33203125" width="128" height="73"/>
     </elements>
 </model>

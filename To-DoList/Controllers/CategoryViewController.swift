@@ -12,22 +12,26 @@ import CoreData
 class CategoryViewController: UITableViewController
 {
     var categories = [Category]()
+    //var indexToEdit:Int?
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
     override func viewDidLoad()
     {
         super.viewDidLoad()
-        
-        self.tableView.estimatedRowHeight = 44.0
+        //self.tableView.estimatedRowHeight = 44.0
 
-        
-        //print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
+        print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
 
         let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(longPressedTableView))
         
         tableView.addGestureRecognizer(longPressRecognizer)
         loadCategories()
+        
+//        if let index = indexToEdit
+//        {
+//            let category = categories[index]
+//        }
     }
 
     @objc func longPressedTableView(sender:UILongPressGestureRecognizer)
@@ -38,41 +42,41 @@ class CategoryViewController: UITableViewController
             if let indexPath = tableView.indexPathForRow(at: touchPoint)
             {
                 tableView.selectRow(at: indexPath, animated: true, scrollPosition: .none)
-                performSegue(withIdentifier: "goToItems", sender: tableView)
+                //performSegue(withIdentifier: "goToItems", sender: tableView)
+                performSegue(withIdentifier: "goToNotes", sender: tableView)
             }
         }
     }
     
-    @IBAction func addNoteButtonPressed(_ sender: UIButton)
-    {
-        var textField = UITextField()
-        
-        let alert = UIAlertController(title: "Add Category Note", message: "", preferredStyle: .alert)
-        
-        let action = UIAlertAction(title: "Add", style: .default) { (action) in
-            
-            print("NOTE ADDED")
-//            let newCategory = Category(context: self.context)
-//            newCategory.name = textField.text!
+//    @IBAction func addNoteButtonPressed(_ sender: UIButton)
+//    {
+//        var textField = UITextField()
+//        
+//        let alert = UIAlertController(title: "Add Category Note", message: "", preferredStyle: .alert)
+//        
+//        let action = UIAlertAction(title: "Add", style: .default) { (action) in
+//            
+////            let newCategory = Category(context: self.context)
+////            newCategory.name = textField.text!
+////
+////            self.categories.append(newCategory)
+////            self.saveCategories()
+//        }
+//        
+//        let cancel = UIAlertAction(title: "Cancel", style: .cancel) { (action) in
+//            self.dismiss(animated: true, completion: nil)
+//        }
+//        alert.addAction(cancel)
 //
-//            self.categories.append(newCategory)
-//            self.saveCategories()
-        }
-        
-        let cancel = UIAlertAction(title: "Cancel", style: .cancel) { (action) in
-            self.dismiss(animated: true, completion: nil)
-        }
-        alert.addAction(cancel)
-
-        alert.addAction(action)
-        
-        alert.addTextField { (field) in
-            textField = field
-            
-            textField.placeholder = "Note"
-        }
-        present(alert, animated: true, completion: nil)
-    }
+//        alert.addAction(action)
+//        
+//        alert.addTextField { (field) in
+//            textField = field
+//            
+//            textField.placeholder = "Note"
+//        }
+//        present(alert, animated: true, completion: nil)
+//    }
     
     //MARK: - TableView Datasource methods
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
@@ -89,8 +93,6 @@ class CategoryViewController: UITableViewController
         //cell.textLabel?.text = categories[indexPath.row].name
         cell?.accessoryType = categories[indexPath.row].done ? .checkmark : .none
         
-        
-        
         return cell!
     }
     
@@ -105,25 +107,22 @@ class CategoryViewController: UITableViewController
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?)
     {
-        //if let indexPath = tableView.indexPathForSelectedRow
-        //{
-            if let toDoVC = segue.destination as? ToDoListViewController
+        if let notesVC = segue.destination as? NotesViewController
+        {
+            if let indexPath = tableView.indexPathForSelectedRow
             {
-                if let indexPath = tableView.indexPathForSelectedRow
-                {
-                    toDoVC.selectedCategory = categories[indexPath.row]
-                }
+                notesVC.selectedCategory = categories[indexPath.row]
             }
-            else if let noteVC = segue.destination as? noteViewController
+        }
+        else if let toDoVC = segue.destination as? ToDoListViewController
+        {
+            if let indexPath = tableView.indexPathForSelectedRow
             {
-                if let indexPath = tableView.indexPathForSelectedRow
-                {
-                    noteVC.itemTitle = categories[indexPath.row].name!
-                    noteVC.type = "category"
-                }
+                toDoVC.selectedCategory = categories[indexPath.row]
             }
-        //}
+        }
     }
+    
     //MARK: - Data manipulation methods
 
     func saveCategories()
@@ -154,7 +153,7 @@ class CategoryViewController: UITableViewController
     
     //MARK: - Add New Categories
 
-    @IBAction func barButtonPressed(_ sender: UIBarButtonItem)
+    fileprivate func createAddAlertAction()
     {
         var textField = UITextField()
         
@@ -175,7 +174,7 @@ class CategoryViewController: UITableViewController
         }
         alert.addAction(action)
         alert.addAction(cancel)
-    
+        
         alert.addTextField { (field) in
             textField = field
             textField.placeholder = "Create new category"
@@ -184,13 +183,18 @@ class CategoryViewController: UITableViewController
         present(alert, animated: true, completion: nil)
     }
     
+    @IBAction func barButtonPressed(_ sender: UIBarButtonItem)
+    {
+        createAddAlertAction()
+    }
+    
     //Override to support conditional editing of the table view.
     
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool
-    {
-        //Return false if you do not want the specified item to be editable.
-        return true
-    }
+//    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool
+//    {
+//        //Return false if you do not want the specified item to be editable.
+//        return true
+//    }
     
     //Override to support editing the table view.
 //    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath)
@@ -207,10 +211,10 @@ class CategoryViewController: UITableViewController
 //        }
 //    }
     
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
-    {
-        return UITableView.automaticDimension
-    }
+//    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
+//    {
+//        return UITableView.automaticDimension
+//    }
     
     //MARK: - Cell Swipe Actions
     
@@ -239,9 +243,34 @@ class CategoryViewController: UITableViewController
     
     override func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration?
     {
-        <#code#>
+        let edit = UIContextualAction(style: .normal, title: "Edit") { (contextualAction, view, actionPerformed:@escaping (Bool)->Void)
+            in
+            
+            let alert = UIAlertController(title: "Edit", message: "Are you sure you want to edit this task?", preferredStyle: .alert)
+            
+            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (alertAction) in
+                actionPerformed(false)
+            }))
+            
+            var textField =  UITextField()
+            
+            alert.addTextField(configurationHandler: { (field) in
+                textField = field
+                textField.text = self.categories[indexPath.row].name
+            })
+            
+            alert.addAction(UIAlertAction(title: "Save", style: .default, handler: { (alertAction) in
+                self.categories[indexPath.row].name = textField.text
+                self.saveCategories()
+                
+                actionPerformed(true)
+            }))
+            
+            self.present(alert, animated: true)
+        }
+        edit.backgroundColor = #colorLiteral(red: 0.1019607857, green: 0.2784313858, blue: 0.400000006, alpha: 1)
+        return UISwipeActionsConfiguration(actions: [edit])
     }
-    
     
     func deleteCategory(index:Int)
     {
@@ -253,14 +282,14 @@ class CategoryViewController: UITableViewController
     
 }
 
-extension CategoryViewController: UITextViewDelegate
-{
-    func textViewDidChange(_ textView: UITextView)
-    {
-        UIView.setAnimationsEnabled(false)
-        textView.sizeToFit()
-        self.tableView.beginUpdates()
-        self.tableView.endUpdates()
-        UIView.setAnimationsEnabled(true)
-    }
-}
+//extension CategoryViewController: UITextViewDelegate
+//{
+//    func textViewDidChange(_ textView: UITextView)
+//    {
+//        UIView.setAnimationsEnabled(false)
+//        textView.sizeToFit()
+//        self.tableView.beginUpdates()
+//        self.tableView.endUpdates()
+//        UIView.setAnimationsEnabled(true)
+//    }
+//}
