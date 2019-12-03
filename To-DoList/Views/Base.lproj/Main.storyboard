@@ -145,10 +145,10 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <stackView opaque="NO" contentMode="scaleAspectFit" axis="vertical" distribution="fillProportionally" alignment="top" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="t1Y-1P-OGi">
+                            <stackView opaque="NO" contentMode="scaleAspectFit" axis="vertical" distribution="fillProportionally" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="t1Y-1P-OGi">
                                 <rect key="frame" x="0.0" y="64" width="375" height="563"/>
                                 <subviews>
-                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleAspectFit" verticalHuggingPriority="1000" scrollEnabled="NO" text="Hello World" translatesAutoresizingMaskIntoConstraints="NO" id="Fbg-Cd-Op7" userLabel="titleTextView">
+                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleAspectFit" verticalHuggingPriority="1000" scrollEnabled="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Fbg-Cd-Op7" userLabel="titleTextView">
                                         <rect key="frame" x="0.0" y="0.0" width="375" height="38"/>
                                         <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
@@ -156,8 +156,7 @@
                                     </textView>
                                     <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MWz-59-GC6" userLabel="notesTextView">
                                         <rect key="frame" x="0.0" y="48" width="375" height="515"/>
-                                        <color key="backgroundColor" red="1" green="0.14913141730000001" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                        <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
+                                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                     </textView>
@@ -172,7 +171,7 @@
                                 <rect key="frame" x="0.0" y="627" width="375" height="40"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yBf-tF-szU" userLabel="btnSave">
-                                        <rect key="frame" x="0.0" y="0.0" width="114.5" height="40"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="82" height="40"/>
                                         <color key="backgroundColor" red="0.3411764706" green="0.69330512150000001" blue="0.83529411760000005" alpha="1" colorSpace="calibratedRGB"/>
                                         <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <state key="normal" title="Save"/>
@@ -181,7 +180,7 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YYI-vq-isA" userLabel="btnCancel">
-                                        <rect key="frame" x="130.5" y="0.0" width="114" height="40"/>
+                                        <rect key="frame" x="98" y="0.0" width="81.5" height="40"/>
                                         <color key="backgroundColor" red="0.3411764706" green="0.69330512150000001" blue="0.83529411760000005" alpha="1" colorSpace="calibratedRGB"/>
                                         <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <state key="normal" title="Cancel"/>
@@ -190,12 +189,21 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mRV-yF-gHv" userLabel="btnDelete">
-                                        <rect key="frame" x="260.5" y="0.0" width="114.5" height="40"/>
+                                        <rect key="frame" x="195.5" y="0.0" width="82" height="40"/>
                                         <color key="backgroundColor" red="0.3411764706" green="0.69330512150000001" blue="0.83529411760000005" alpha="1" colorSpace="calibratedRGB"/>
                                         <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <state key="normal" title="Delete"/>
                                         <connections>
                                             <action selector="btnDeleteTapped:" destination="MUp-Rm-RBr" eventType="touchUpInside" id="8Tg-hL-GNZ"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nwo-ZW-4eu" userLabel="btnExit">
+                                        <rect key="frame" x="293.5" y="0.0" width="81.5" height="40"/>
+                                        <color key="backgroundColor" red="0.3411764706" green="0.69330512150000001" blue="0.83529411760000005" alpha="1" colorSpace="calibratedRGB"/>
+                                        <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <state key="normal" title="Exit"/>
+                                        <connections>
+                                            <action selector="btnExitTapped:" destination="MUp-Rm-RBr" eventType="touchUpInside" id="8gr-1l-iXB"/>
                                         </connections>
                                     </button>
                                 </subviews>
@@ -215,6 +223,7 @@
                         <viewLayoutGuide key="safeArea" id="T8a-ge-cjR"/>
                     </view>
                     <connections>
+                        <outlet property="noteTextView" destination="MWz-59-GC6" id="Hui-en-rqJ"/>
                         <outlet property="titleTextView" destination="Fbg-Cd-Op7" id="whJ-Va-H5b"/>
                     </connections>
                 </viewController>
