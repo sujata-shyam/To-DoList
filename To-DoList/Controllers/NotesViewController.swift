@@ -20,14 +20,9 @@ class NotesViewController: UIViewController
     var globalNoteText:String? = nil
     var isNew = true
     
-//    var selectedCategory:Category? {
-//        didSet
-//        {
-//            loadUpdateNotes()
-//        }
-//    }
+    var selectedCategory = Category()//Value passed from prev. View Controller
     
-    var selectedCategory = Category()
+    
     
     override func viewDidLoad()
     {
@@ -35,29 +30,28 @@ class NotesViewController: UIViewController
         
         loadUpdateNotes()
         setContent()
+        
+        let swipe: UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(DismissKeyboard))
+        
+        noteTextView.addGestureRecognizer(swipe)
     }
-
-//    func saveChanges() {
-//        let newNote = Notes(context: self.context)
-//
-//        if(isNew)
-//        {
-//            newNote.parentCategory = self.selectedCategory
-//            newNote.note = noteTextView.text
-//            isNew = false
-//
-//            self.saveNotes()
-//        }
-//        else
-//        {
-//            loadUpdateNotes(isUpdate:true)
-//        }
-//    }
+    
+    func setContent()
+    {
+        titleTextView.text = selectedCategory.name
+        if(globalNote != nil)
+        {
+            if let note = globalNote?.note
+            {
+                noteTextView.text = note
+            }
+        }
+    }
+    
+    //MARK: - UIbutton functions
     
     @IBAction func btnSaveTapped(_ sender: UIButton)
     {
-        //saveChanges()
-
         let newNote = Notes(context: self.context)
         
         if(isNew)
@@ -71,7 +65,7 @@ class NotesViewController: UIViewController
         else
         {
             loadUpdateNotes(isUpdate:true)
-        } //navigationController?.popViewController(animated: true)
+        }
     }
     
     @IBAction func btnCancelTapped(_ sender: UIButton)
@@ -81,23 +75,37 @@ class NotesViewController: UIViewController
     
     @IBAction func btnDeleteTapped(_ sender: UIButton)
     {
-        //Delete the row from the data source
-        if globalNote != nil
-        {
-            context.delete(globalNote!)
-            saveNotes()
-            noteTextView.text = nil
+        
+        let alert = UIAlertController(title: "", message: "Are you sure you want to delete the note", preferredStyle: .alert)
+        
+        let action = UIAlertAction(title: "Yes", style: .default) { (action) in
+            
+            //Delete the row from the data source
+            if self.globalNote != nil
+            {
+                self.context.delete(self.globalNote!)
+                self.saveNotes()
+                self.noteTextView.text = nil
+            }
         }
+        
+        let cancel = UIAlertAction(title: "No", style: .cancel) { (action) in
+            self.dismiss(animated: true, completion: nil)
+        }
+        alert.addAction(action)
+        alert.addAction(cancel)
+        present(alert, animated: true, completion: nil)
     }
     
     @IBAction func btnExitTapped(_ sender: UIButton)
     {
         //Delete the row from the data source
-        if globalNote != nil
-        {
-            context.delete(globalNote!)
-            saveNotes()
-        }
+//        if globalNote != nil
+//        {
+//            context.delete(globalNote!)
+//            saveNotes()
+//        }
+        navigationController?.popViewController(animated: true)
     }
     //MARK: - Model Manipulation Methods
     
@@ -137,22 +145,16 @@ class NotesViewController: UIViewController
         }
         else
         {
-            print(globalNote)
             globalNote?.setValue(noteTextView.text, forKey: "note")
             saveNotes()
         }
     }
     
-    func setContent()
+    //MARK: - Dismiss the keyboard
+    
+    @objc func DismissKeyboard()
     {
-        titleTextView.text = selectedCategory.name
-        if(globalNote != nil)
-        {
-            if let note = globalNote?.note
-            {
-                noteTextView.text = note
-            }
-        }
-
+        //Causes the view to resign from the status of first responder.
+        noteTextView.resignFirstResponder()
     }
 }

@@ -12,14 +12,11 @@ import CoreData
 class CategoryViewController: UITableViewController
 {
     var categories = [Category]()
-    //var indexToEdit:Int?
-    
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
     override func viewDidLoad()
     {
         super.viewDidLoad()
-        //self.tableView.estimatedRowHeight = 44.0
 
         print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
 
@@ -27,13 +24,9 @@ class CategoryViewController: UITableViewController
         
         tableView.addGestureRecognizer(longPressRecognizer)
         loadCategories()
-        
-//        if let index = indexToEdit
-//        {
-//            let category = categories[index]
-//        }
     }
-
+    
+    //MARK: - LongPress methods
     @objc func longPressedTableView(sender:UILongPressGestureRecognizer)
     {
         if(sender.state == .began)
@@ -42,43 +35,13 @@ class CategoryViewController: UITableViewController
             if let indexPath = tableView.indexPathForRow(at: touchPoint)
             {
                 tableView.selectRow(at: indexPath, animated: true, scrollPosition: .none)
-                //performSegue(withIdentifier: "goToItems", sender: tableView)
                 performSegue(withIdentifier: "goToNotes", sender: tableView)
             }
         }
     }
     
-//    @IBAction func addNoteButtonPressed(_ sender: UIButton)
-//    {
-//        var textField = UITextField()
-//        
-//        let alert = UIAlertController(title: "Add Category Note", message: "", preferredStyle: .alert)
-//        
-//        let action = UIAlertAction(title: "Add", style: .default) { (action) in
-//            
-////            let newCategory = Category(context: self.context)
-////            newCategory.name = textField.text!
-////
-////            self.categories.append(newCategory)
-////            self.saveCategories()
-//        }
-//        
-//        let cancel = UIAlertAction(title: "Cancel", style: .cancel) { (action) in
-//            self.dismiss(animated: true, completion: nil)
-//        }
-//        alert.addAction(cancel)
-//
-//        alert.addAction(action)
-//        
-//        alert.addTextField { (field) in
-//            textField = field
-//            
-//            textField.placeholder = "Note"
-//        }
-//        present(alert, animated: true, completion: nil)
-//    }
-    
     //MARK: - TableView Datasource methods
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
         return categories.count
@@ -89,8 +52,6 @@ class CategoryViewController: UITableViewController
         let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath) as? categoryTableViewCell
         
         cell?.lblTitle.text = categories[indexPath.row].name
-        
-        //cell.textLabel?.text = categories[indexPath.row].name
         cell?.accessoryType = categories[indexPath.row].done ? .checkmark : .none
         
         return cell!
@@ -100,11 +61,11 @@ class CategoryViewController: UITableViewController
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
         categories[indexPath.row].done = !categories[indexPath.row].done
-        
         saveCategories()
         tableView.deselectRow(at: indexPath, animated: true)
     }
 
+    //MARK: - Segue methods
     override func prepare(for segue: UIStoryboardSegue, sender: Any?)
     {
         if let notesVC = segue.destination as? NotesViewController
@@ -114,13 +75,13 @@ class CategoryViewController: UITableViewController
                 notesVC.selectedCategory = categories[indexPath.row]
             }
         }
-        else if let toDoVC = segue.destination as? ToDoListViewController
-        {
-            if let indexPath = tableView.indexPathForSelectedRow
-            {
-                toDoVC.selectedCategory = categories[indexPath.row]
-            }
-        }
+//        else if let toDoVC = segue.destination as? ToDoListViewController
+//        {
+//            if let indexPath = tableView.indexPathForSelectedRow
+//            {
+//                toDoVC.selectedCategory = categories[indexPath.row]
+//            }
+//        }
     }
     
     //MARK: - Data manipulation methods
@@ -133,20 +94,35 @@ class CategoryViewController: UITableViewController
         }
         catch
         {
-            print("Error saving category: \(error)")
+            print("Error saving task: \(error)")
         }
         tableView.reloadData()
     }
     
-    func loadCategories(with request:NSFetchRequest<Category> = Category.fetchRequest())
+//    func loadCategories(with request:NSFetchRequest<Category> = Category.fetchRequest())
+//    {
+//        do
+//        {
+//            categories = try context.fetch(request)
+//        }
+//        catch
+//        {
+//            print("Error loading tasks:\(error)")
+//        }
+//        tableView.reloadData()
+//    }
+    
+    func loadCategories(with request:NSFetchRequest<Category> = Category.fetchRequest(), predicate: NSPredicate? = nil)
     {
+        request.predicate = predicate
+        
         do
         {
             categories = try context.fetch(request)
         }
         catch
         {
-            print("Error loading categories:\(error)")
+            print("Error fetching data from context:\(error)")
         }
         tableView.reloadData()
     }
@@ -157,7 +133,7 @@ class CategoryViewController: UITableViewController
     {
         var textField = UITextField()
         
-        let alert = UIAlertController(title: "Add New Category", message: "", preferredStyle: .alert)
+        let alert = UIAlertController(title: "Add New Task", message: "", preferredStyle: .alert)
         
         let action = UIAlertAction(title: "Add", style: .default) { (action) in
             
@@ -177,7 +153,7 @@ class CategoryViewController: UITableViewController
         
         alert.addTextField { (field) in
             textField = field
-            textField.placeholder = "Create new category"
+            textField.placeholder = "Create new task"
         }
         
         present(alert, animated: true, completion: nil)
@@ -187,34 +163,6 @@ class CategoryViewController: UITableViewController
     {
         createAddAlertAction()
     }
-    
-    //Override to support conditional editing of the table view.
-    
-//    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool
-//    {
-//        //Return false if you do not want the specified item to be editable.
-//        return true
-//    }
-    
-    //Override to support editing the table view.
-//    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath)
-//    {
-//        if editingStyle == .delete
-//        {
-//            //Delete the row from the data source
-//            context.delete(categories[indexPath.row])
-//
-//            categories.remove(at: indexPath.row)
-//            tableView.deleteRows(at: [indexPath], with: .fade)
-//            saveCategories()
-//
-//        }
-//    }
-    
-//    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
-//    {
-//        return UITableView.automaticDimension
-//    }
     
     //MARK: - Cell Swipe Actions
     
@@ -279,17 +227,42 @@ class CategoryViewController: UITableViewController
         categories.remove(at: index)
         saveCategories()
     }
-    
 }
 
-//extension CategoryViewController: UITextViewDelegate
-//{
-//    func textViewDidChange(_ textView: UITextView)
-//    {
-//        UIView.setAnimationsEnabled(false)
-//        textView.sizeToFit()
-//        self.tableView.beginUpdates()
-//        self.tableView.endUpdates()
-//        UIView.setAnimationsEnabled(true)
-//    }
-//}
+extension CategoryViewController: UISearchBarDelegate
+{
+    func createRequest(searchText:String)->(NSFetchRequest<Category>,NSPredicate)
+    {
+        let request : NSFetchRequest<Category> = Category.fetchRequest()
+        
+        let predicate = NSPredicate(format: "name CONTAINS[cd] %@", searchText)
+        
+        request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
+        return (request,predicate)
+    }
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar)
+    {
+        let result = createRequest(searchText:searchBar.text!)
+        loadCategories(with: result.0, predicate: result.1)
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String)
+    {
+        if(searchBar.text?.count == 0)
+        {
+            loadCategories()
+            DispatchQueue.main.async
+            {
+                searchBar.resignFirstResponder()
+            }
+        }
+        else
+        {
+            let result = createRequest(searchText:searchBar.text!)
+            loadCategories(with: result.0, predicate: result.1)
+        }
+    }
+}
+
+
